@@ -59,7 +59,7 @@ contract Lottery {
         address payable dest = t_winner.t_owner;
         address payable m_owner = adress(l_ownerKey);
         tvm.accept();
-        uint prize = ((l_numTickets *  l_ticketCost) / 100) * 50;
+        uint prize = ((l_numTickets *  l_ticketCost) / 100) * l_percent;
         dest.transfer(prize , true, 0);
         m_owner.transfer((l_numTickets * l_ticketCost) - prize, true, 0);
     }
