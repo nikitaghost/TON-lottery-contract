@@ -28,9 +28,9 @@ contract Lottery {
     uint8 l_percent;
 
     uint l_numTickets;
-    mapping(uint => Ticket) tickets;
+    mapping(uint => Lottery.Ticket) tickets;
 
-    function _initialize(uint256 ownerKey, uint256 finishDate, uint128 ticketCost, uint8 percent){
+    function _initialize(uint256 ownerKey, uint256 finishDate, uint128 ticketCost, uint8 percent) public{
         l_ownerKey = ownerKey;
         l_finishDate = finishDate;
         l_ticketCost = ticketCost;
@@ -48,30 +48,34 @@ contract Lottery {
         _initialize(ownerKey, finishDate, ticketCost, percent);
     }
 
-    function buyTicket(adress payable t_owner) public {
+    function buyTicket(address payable t_owner) public payable{
         uint tId = l_numTickets++;
         tickets[tId] = Ticket(t_owner);
     }
 
-    function chooseWinner() public returns (uint256 winnerAddress) {
-        uint num = 10;
-        Ticket t_winner = tickets.fetch(num);
+    function chooseWinner() public view returns (uint256 winnerAddress) {
+        l_status = 1;
+        uint randomNum = random();
+        Ticket t_winner = tickets.fetch(randomNum);
         address payable dest = t_winner.t_owner;
-        address payable m_owner = adress(l_ownerKey);
+        address payable m_owner = address(l_ownerKey);
         tvm.accept();
-        uint prize = ((l_numTickets *  l_ticketCost) / 100) * l_percent;
-        dest.transfer(prize , true, 0);
-        m_owner.transfer((l_numTickets * l_ticketCost) - prize, true, 0);
+        uint256 prize = ((l_numTickets *  l_ticketCost) / 100) * l_percent;
+        dest.transfer(uint128(prize) , true, 0);
+        uint256 remainsMoney = (l_numTickets * l_ticketCost) - prize;
+        m_owner.transfer(uint128(remainsMoney), true, 0);
     }
 
-    function getNumOfSoldTickets() public returns (uint256 numOfSoldTickets){
+    function getNumOfSoldTickets() public view returns (uint256 numOfSoldTickets){
         numOfSoldTickets = l_numTickets;
     }
 
-    function getTicket(uint64 tId) public view returns (Ticket ticket){
-        (bool exists, Ticket tf) = tickets.fetch(tId);
-        require(exists, 102);
-        ticket = tf;
-    }   
+    function random() private view returns(uint){
+        return uint(keccak256(abi.encodePacked(block.difficulty, now)));
+    }
 
+    function getTicket(uint64 tId) public view returns (Ticket ticket){
+        Ticket tf = tickets.fetch(tId);
+        ticket = tf;
+    }
 }
