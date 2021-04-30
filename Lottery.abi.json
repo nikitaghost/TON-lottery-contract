@@ -1,0 +1,72 @@
+{
+	"ABI version": 2,
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"ownerKey","type":"uint256"},
+				{"name":"finishDate","type":"uint256"},
+				{"name":"ticketCost","type":"uint128"},
+				{"name":"percent","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "_initialize",
+			"inputs": [
+				{"name":"ownerKey","type":"uint256"},
+				{"name":"finishDate","type":"uint256"},
+				{"name":"ticketCost","type":"uint128"},
+				{"name":"percent","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "buyTicket",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "chooseWinner",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"winnerAddress","type":"uint256"}
+			]
+		},
+		{
+			"name": "getNumOfSoldTickets",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"numOfSoldTickets","type":"uint256"}
+			]
+		},
+		{
+			"name": "getTicket",
+			"inputs": [
+				{"name":"tId","type":"uint64"}
+			],
+			"outputs": [
+				{"components":[{"name":"t_owner","type":"address"}],"name":"ticket","type":"tuple"}
+			]
+		},
+		{
+			"name": "timestamp",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"timestamp","type":"uint32"}
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	]
+}

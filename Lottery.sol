@@ -48,15 +48,16 @@ contract Lottery {
         _initialize(ownerKey, finishDate, ticketCost, percent);
     }
 
-    function buyTicket(address payable t_owner) public payable{
+    function buyTicket() public payable{
+        //block.timestamp
         uint tId = l_numTickets++;
-        tickets[tId] = Ticket(t_owner);
+        tickets[tId] = Ticket(msg.sender);
     }
 
-    function chooseWinner() public view returns (uint256 winnerAddress) {
-        l_status = 1;
+    function chooseWinner() public returns (uint256 winnerAddress) {
         uint randomNum = random();
-        Ticket t_winner = tickets.fetch(randomNum);
+        optional(Ticket) opt_winner = tickets.fetch(randomNum);
+        Ticket t_winner = opt_winner.get();
         address payable dest = t_winner.t_owner;
         address payable m_owner = address(l_ownerKey);
         tvm.accept();
@@ -64,6 +65,7 @@ contract Lottery {
         dest.transfer(uint128(prize) , true, 0);
         uint256 remainsMoney = (l_numTickets * l_ticketCost) - prize;
         m_owner.transfer(uint128(remainsMoney), true, 0);
+        l_status = 1;
     }
 
     function getNumOfSoldTickets() public view returns (uint256 numOfSoldTickets){
@@ -71,11 +73,13 @@ contract Lottery {
     }
 
     function random() private view returns(uint){
-        return uint(keccak256(abi.encodePacked(block.difficulty, now)));
+        //Need to create random number
+        return 1;
     }
 
     function getTicket(uint64 tId) public view returns (Ticket ticket){
-        Ticket tf = tickets.fetch(tId);
+        optional(Ticket) opt_ticket = tickets.fetch(tId);
+        Ticket tf = opt_ticket.get();
         ticket = tf;
     }
 }
